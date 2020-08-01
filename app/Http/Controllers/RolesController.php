@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpFoundation\Response;
 
 class RolesController extends Controller
 {
@@ -21,6 +22,9 @@ class RolesController extends Controller
      */
     public function index()
     {
+        
+        Gate::authorize('access-roles');
+
         return view('roles.index', ['roles' => Role::all()]);
     }
 
@@ -31,7 +35,9 @@ class RolesController extends Controller
      */
     public function create()
     {
-        //
+        Gate::authorize('access-roles');
+
+        return view('roles.create');
     }
 
     /**
@@ -42,7 +48,11 @@ class RolesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        Gate::authorize('access-roles');
+
+        Role::create($this->validateRequest());
+
+        return redirect()->route('roles.index');
     }
 
     /**
@@ -88,5 +98,12 @@ class RolesController extends Controller
     public function destroy(Role $role)
     {
         //
+    }
+
+    private function validateRequest()
+    {
+        return request()->validate([
+            'title' => ['required', 'unique:roles']
+        ]);
     }
 }

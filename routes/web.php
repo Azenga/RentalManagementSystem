@@ -19,6 +19,12 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::resources([
-    'roles' => 'RolesController'
-]);
+Route::middleware('2fa')->group(function(){
+    Route::resources([
+        'roles' => 'RolesController'
+    ]);
+});
+
+#Two factor auth routes
+Route::get('/2fa/verify', 'TwoFactorController@showTwoFactorForm');
+Route::post('/2fa/verify', 'TwoFactorController@verifyTwoFactor');
